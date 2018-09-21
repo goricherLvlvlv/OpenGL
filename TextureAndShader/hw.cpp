@@ -55,6 +55,24 @@ GLuint triangle_shader_init() {
 	return shaderProgram;
 }
 
+GLfloat percent = 0.0f;
+// action表示 按下/释放
+// mode表示是否要加入ctrl, alt等操作
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, GL_TRUE);
+		printf("press escape");
+	}
+	if (key == GLFW_KEY_UP && action == GLFW_REPEAT) {
+		percent += 0.02f;
+		printf("press up: percent = %lf\n", percent);
+	}
+	else if (key == GLFW_KEY_DOWN && action == GLFW_REPEAT) {
+		percent -= 0.02f;
+		printf("press down: percent = %lf\n", percent);
+	}
+}
+
 int main() {
 	/***********************************************
 	******************初始化设置********************
@@ -88,6 +106,7 @@ int main() {
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 
+	glfwSetKeyCallback(window, key_callback);
 
 	/***********************************************
 	******************shader设置********************
@@ -108,10 +127,10 @@ int main() {
 
 	GLfloat vertices[] = {
 		//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // 右上
-		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // 右下
+		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
+		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
 		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // 左上
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
 	};
 
 	GLuint indices[] = {  // Note that we start from 0!
@@ -159,8 +178,8 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	// 设置纹理环绕方式								// 重复纹理图像
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// 设置过滤										// 线性过滤
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -194,8 +213,8 @@ int main() {
 
 	glBindTexture(GL_TEXTURE_2D, texture2);
 	// 设置纹理环绕方式								// 重复纹理图像
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// 设置过滤										// 线性过滤
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -257,6 +276,7 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUniform1i(glGetUniformLocation(outShader.Program, "ourTexture2"), 1);
 
+		outShader.setFloat("percent", percent);
 
 		glBindVertexArray(VAO);
 		//							 顶点个数
