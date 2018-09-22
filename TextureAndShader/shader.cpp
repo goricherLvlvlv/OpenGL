@@ -80,3 +80,9 @@ void Shader::setFloat(const GLchar* name, GLfloat offset) {
 	GLint vertexOffLocal = glGetUniformLocation(this->Program, name);
 	glUniform1f(vertexOffLocal, offset);
 }
+
+void Shader::setMat4(const GLchar* name, const GLfloat* offset) {
+	GLint vertexOffLocal = glGetUniformLocation(this->Program, name);
+	//                                 矩阵个数		是否交换行列
+	glUniformMatrix4fv(vertexOffLocal, 1,			GL_FALSE, offset);
+}

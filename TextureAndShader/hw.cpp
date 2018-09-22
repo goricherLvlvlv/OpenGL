@@ -7,7 +7,13 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+// SOIL 读取任意格式图片
 #include <SOIL.h>
+// glm 变换库
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "shader.h"
 using std::cout;
 using std::endl;
@@ -77,7 +83,7 @@ int main() {
 	/***********************************************
 	******************初始化设置********************
 	***********************************************/
-
+	
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);					// 主版本号
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);					// 副版本号
@@ -120,7 +126,7 @@ int main() {
 		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
 		0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部
 	};
-
+	
 	/***********************************************
 	*****************VAO,VBO设置********************
 	***********************************************/
@@ -237,7 +243,31 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
+	/***********************************************
+	*******************旋转变换*********************
+	***********************************************/
 
+	glm::vec4 vec = { 1.0f, 0.0f, 0.0f, 1.0f };
+	// 返回单位矩阵的lambda
+	auto identity_matrix = []() {return glm::mat4{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	}; };
+
+	auto print_matrix = [](glm::mat4 trans) {
+		printf("%.4lf\t\t%.4lf\t\t%.4lf\t\t%.4lf\n", trans[0].x, trans[0].y, trans[0].z, trans[0].w);
+		printf("%.4lf\t\t%.4lf\t\t%.4lf\t\t%.4lf\n", trans[1].x, trans[1].y, trans[1].z, trans[1].w);
+		printf("%.4lf\t\t%.4lf\t\t%.4lf\t\t%.4lf\n", trans[2].x, trans[2].y, trans[2].z, trans[2].w);
+		printf("%.4lf\t\t%.4lf\t\t%.4lf\t\t%.4lf\n", trans[3].x, trans[3].y, trans[3].z, trans[3].w);
+		
+		cout << endl;
+	};
+
+	glm::mat4 trans = identity_matrix();
+	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
 
 	GLfloat off = 0.0f;
@@ -276,11 +306,31 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUniform1i(glGetUniformLocation(outShader.Program, "ourTexture2"), 1);
 
+		// 变换
 		outShader.setFloat("percent", percent);
+
+		
+
+		trans = identity_matrix();
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, glm::radians((GLfloat)glfwGetTime() * 50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		outShader.setMat4("transform", glm::value_ptr(trans));
+		
+		
 
 		glBindVertexArray(VAO);
 		//							 顶点个数
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		trans = identity_matrix();
+		trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+		GLfloat scaleAmount = sin(glfwGetTime());
+		trans = glm::scale(trans, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+
+		outShader.setMat4("transform", glm::value_ptr(trans));
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 		glBindVertexArray(0);
 
 		// 交换颜色缓冲
@@ -288,6 +338,7 @@ int main() {
 	}
 	glDeleteBuffers(1, &VBO);
 	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &EBO);
 	// 释放资源
 	glfwTerminate();
 
