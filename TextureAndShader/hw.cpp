@@ -61,7 +61,7 @@ GLuint triangle_shader_init() {
 	return shaderProgram;
 }
 
-GLfloat percent = 0.0f;
+GLfloat percent = 0.8f;
 // action表示 按下/释放
 // mode表示是否要加入ctrl, alt等操作
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
@@ -108,9 +108,9 @@ int main() {
 
 	// 这里不直接设置width和height的值, 让它在高DPI屏幕上也能正常工作.
 	// OpenGL坐标范围为-1到1
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	glViewport(0, 0, width, height);
+	int screenWidth, screenHeight;
+	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
+	glViewport(0, 0, screenWidth, screenHeight);
 
 	glfwSetKeyCallback(window, key_callback);
 
@@ -131,12 +131,57 @@ int main() {
 	*****************VAO,VBO设置********************
 	***********************************************/
 
-	GLfloat vertices[] = {
-		//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
-		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
+	//GLfloat vertices[] = {
+	//	//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+	//	0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
+	//	0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
+	//	-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
+	//	-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
+	//};
+
+	// 立方体
+	float vertices[] = {
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
 	GLuint indices[] = {  // Note that we start from 0!
@@ -144,29 +189,43 @@ int main() {
 		1, 2, 3  // Second Triangle
 	};
 
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	// 生成
-	GLuint VAO, VBO, EBO;
+	GLuint VAO, VBO;
+	//GLuint EBO;
 	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &EBO);
+	//glGenBuffers(1, &EBO);
 	// 绑定
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	// 添加数据
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	// 绑定VAO到上下文
 	// position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);	
 	glEnableVertexAttribArray(0);
 
 	// color
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	//glEnableVertexAttribArray(1);
 
 	// TexCoord
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 
 	// 解除绑定
@@ -192,6 +251,7 @@ int main() {
 
 	// channel 渠道设置为0
 	// SOIL_LOAD_RGB 只关注图片的RGB值
+	int width, height;
 	unsigned char* image = SOIL_load_image("container.jpg", &width, &height, 0, SOIL_LOAD_RGB);
 	// 载入图片, 生成纹理
 	glTexImage2D(GL_TEXTURE_2D,					// 目标
@@ -225,7 +285,7 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	image = SOIL_load_image("am.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	image = SOIL_load_image("huaji.jpg", &width, &height, 0, SOIL_LOAD_RGB);
 
 	glTexImage2D(GL_TEXTURE_2D,		// 目标
 		0,							// 多级渐远纹理的级别, 0为基本级别. 如果不为0, 手动设置级别
@@ -269,9 +329,23 @@ int main() {
 	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
 	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
 
+	/***********************************************
+	********************3D制作**********************
+	***********************************************/
 
-	GLfloat off = 0.0f;
+	glm::mat4 model = identity_matrix();
+	model = glm::rotate(model, (GLfloat)glfwGetTime() * glm::radians(-55.0f), glm::vec3(0.5f, 1.0f, 0.0f));		// Vlocal转成世界坐标
 
+	glm::mat4 view = identity_matrix();
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));				// 场景移动
+
+	glm::mat4 projection = identity_matrix();
+	projection = glm::perspective(glm::radians(45.0f), static_cast<float>(screenWidth) / screenHeight, 0.1f, 100.0f);
+
+	
+
+
+	glEnable(GL_DEPTH_TEST);
 	// Game Loop
 	while (!glfwWindowShouldClose(window)) {
 		// 函数检查触发事件(键盘, 鼠标)
@@ -279,7 +353,7 @@ int main() {
 
 		// 渲染
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// 画
 
@@ -309,27 +383,33 @@ int main() {
 		// 变换
 		outShader.setFloat("percent", percent);
 
-		
+		//model = identity_matrix();
+		//model = glm::rotate(model, (GLfloat)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));		// Vlocal转成世界坐标
 
-		trans = identity_matrix();
-		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-		trans = glm::rotate(trans, glm::radians((GLfloat)glfwGetTime() * 50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		outShader.setMat4("transform", glm::value_ptr(trans));
-		
 		
 
 		glBindVertexArray(VAO);
 		//							 顶点个数
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		trans = identity_matrix();
-		trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
-		GLfloat scaleAmount = sin(glfwGetTime());
-		trans = glm::scale(trans, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
 
-		outShader.setMat4("transform", glm::value_ptr(trans));
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		outShader.setMat4("view", glm::value_ptr(view));
+		outShader.setMat4("projection", glm::value_ptr(projection));
+		for (GLint i = 0; i < 10; ++i) {
+			glm::mat4 model = identity_matrix();
+			model = glm::translate(model, cubePositions[i]);
+			GLfloat angle = glm::radians(20.0f) * i;
+
+			if (i % 3 == 0)
+				angle = static_cast<GLfloat>(glfwGetTime()*glm::radians(20.0f));
+
+			model = glm::rotate(model, angle, glm::vec3(1.0, 0.3f, 0.5f));
+
+			outShader.setMat4("model", glm::value_ptr(model));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
 
 		glBindVertexArray(0);
 
@@ -338,7 +418,7 @@ int main() {
 	}
 	glDeleteBuffers(1, &VBO);
 	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &EBO);
+	//glDeleteBuffers(1, &EBO);
 	// 释放资源
 	glfwTerminate();
 
